@@ -3,7 +3,11 @@ const mongoose = require("mongoose");
 const DEFAULT_DB_NAME = "baculpo_db";
 
 const getMongoUri = () =>
-  process.env.MONGO_URI || process.env.MONGODB_URI || process.env.DATABASE_URL;
+  process.env.MONGO_URI ||
+  process.env.MONGODB_URI ||
+  process.env.DATABASE_URL ||
+  process.env.MONGO_URl ||
+  process.env.MONGO_UR1;
 
 const getMongoDbName = () =>
   process.env.MONGO_DB_NAME ||
@@ -18,6 +22,8 @@ const connectDB = async () => {
     console.log("[db] MONGO_URI present:", Boolean(process.env.MONGO_URI));
     console.log("[db] MONGODB_URI present:", Boolean(process.env.MONGODB_URI));
     console.log("[db] DATABASE_URL present:", Boolean(process.env.DATABASE_URL));
+    console.log("[db] MONGO_URl present:", Boolean(process.env.MONGO_URl));
+    console.log("[db] MONGO_UR1 present:", Boolean(process.env.MONGO_UR1));
     console.log("[db] MongoDB database:", dbName);
 
     if (!mongoUri) {

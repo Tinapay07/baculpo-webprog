@@ -49,6 +49,23 @@ app.use(
 );
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  const frontendOrigin =
+    parseOrigins(process.env.FRONTEND_ORIGIN)[0] ||
+    parseOrigins(process.env.FRONTEND_ORIGINS)[0];
+
+  if (frontendOrigin) {
+    res.redirect(frontendOrigin);
+    return;
+  }
+
+  res.json({
+    status: "ok",
+    message: "Baculpo Webprog API is running.",
+    health: "/api/health",
+  });
+});
+
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
