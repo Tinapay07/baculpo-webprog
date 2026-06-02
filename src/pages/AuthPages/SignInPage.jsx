@@ -1,5 +1,8 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import Button from '../../components/Button';
+import { setAuthSession } from '../../services/AuthService';
+import { loginUser } from '../../services/UserService';
 
 const inputClasses =
   'mt-2 w-full rounded-xl border border-zinc-300 bg-zinc-100 px-4 py-3 text-sm text-zinc-900 outline-none transition placeholder:text-zinc-400 focus:border-zinc-900 focus:bg-zinc-50';
@@ -7,6 +10,38 @@ const inputClasses =
 const actionButtonClassName = 'w-full rounded-xl py-3 text-[11px] tracking-[0.2em]';
 
 const SignInPage = () => {
+  const navigate = useNavigate();
+  const [credentials, setCredentials] = useState({
+    email: '',
+    password: '',
+  });
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setCredentials((current) => ({
+      ...current,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError('');
+    setIsSubmitting(true);
+
+    try {
+      const session = await loginUser(credentials);
+      setAuthSession(session);
+      navigate('/');
+    } catch (err) {
+      setError(err.message || 'Unable to log in. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <>
       <h1 className="text-3xl font-bold tracking-tight text-zinc-900 sm:text-4xl">Log In</h1>
@@ -14,17 +49,21 @@ const SignInPage = () => {
         Access your account using the same monochrome wireframe language used across the site.
       </p>
 
-      <form className="mt-8 space-y-5">
+      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="signin-email" className="text-sm font-medium text-zinc-700">
             Email Address
           </label>
           <input
             id="signin-email"
+            name="email"
             type="email"
             placeholder="Placeholder"
             autoComplete="email"
             className={inputClasses}
+            value={credentials.email}
+            onChange={handleChange}
+            required
           />
         </div>
 
@@ -34,10 +73,14 @@ const SignInPage = () => {
           </label>
           <input
             id="signin-password"
+            name="password"
             type="password"
             placeholder="Placeholder"
             autoComplete="current-password"
             className={inputClasses}
+            value={credentials.password}
+            onChange={handleChange}
+            required
           />
 
           <p className="mt-2 text-xs leading-5 text-zinc-500">
@@ -55,8 +98,19 @@ const SignInPage = () => {
           </button>
         </div>
 
-        <Button type="submit" variant="primary" className={actionButtonClassName}>
-          Log In
+        {error ? (
+          <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </p>
+        ) : null}
+
+        <Button
+          type="submit"
+          variant="primary"
+          className={actionButtonClassName}
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Logging In' : 'Log In'}
         </Button>
 
         <div className="grid gap-3 pt-2 sm:grid-cols-2">
