@@ -7,7 +7,7 @@
     "dev": "node scripts/dev-all.cjs",
     "dev:all": "node scripts/dev-all.cjs",
     "dev:client": "vite",
-    "build": "vite build",
+    "build": "node ./node_modules/vite/bin/vite.js build",
     "preview": "vite preview"
   },
   "dependencies": {
