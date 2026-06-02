@@ -2,7 +2,17 @@ const mongoose = require("mongoose");
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URI, {
+    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+    console.log("[db] MONGO_URI present:", Boolean(process.env.MONGO_URI));
+    console.log("[db] MONGODB_URI present:", Boolean(process.env.MONGODB_URI));
+
+    if (!mongoUri) {
+      throw new Error(
+        "Missing MongoDB connection string. Set MONGO_URI in Render environment variables.",
+      );
+    }
+
+    const conn = await mongoose.connect(String(mongoUri).trim(), {
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
       retryWrites: true,
