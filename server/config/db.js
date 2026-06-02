@@ -1,10 +1,24 @@
 const mongoose = require("mongoose");
 
+const DEFAULT_DB_NAME = "baculpo_db";
+
+const getMongoUri = () =>
+  process.env.MONGO_URI || process.env.MONGODB_URI || process.env.DATABASE_URL;
+
+const getMongoDbName = () =>
+  process.env.MONGO_DB_NAME ||
+  process.env.MONGODB_DB_NAME ||
+  process.env.DB_NAME ||
+  DEFAULT_DB_NAME;
+
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGO_URI || process.env.MONGODB_URI;
+    const mongoUri = getMongoUri();
+    const dbName = getMongoDbName();
     console.log("[db] MONGO_URI present:", Boolean(process.env.MONGO_URI));
     console.log("[db] MONGODB_URI present:", Boolean(process.env.MONGODB_URI));
+    console.log("[db] DATABASE_URL present:", Boolean(process.env.DATABASE_URL));
+    console.log("[db] MongoDB database:", dbName);
 
     if (!mongoUri) {
       throw new Error(
@@ -13,6 +27,7 @@ const connectDB = async () => {
     }
 
     const conn = await mongoose.connect(String(mongoUri).trim(), {
+      dbName,
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
       retryWrites: true,
@@ -32,7 +47,7 @@ const connectDB = async () => {
       msg.includes("bad auth")
     ) {
       console.error(
-        "Authentication failed. Check `server/.env` MONGO_URI username/password, ensure the DB user exists in Atlas, and whitelist your IP in Atlas Network Access.",
+        "Authentication failed. Check MONGO_URI username/password, ensure the DB user exists in Atlas, and allow Render in Atlas Network Access.",
       );
     }
 
