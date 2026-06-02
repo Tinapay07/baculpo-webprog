@@ -4,13 +4,24 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node scripts/dev-all.cjs",
+    "dev:all": "node scripts/dev-all.cjs",
+    "dev:client": "vite",
     "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^9.0.0",
+    "@mui/material": "^9.0.0",
+    "@mui/x-charts": "^9.0.4",
+    "@mui/x-data-grid": "^9.0.4",
+    "leaflet": "^1.9.4",
+    "mongodb": "^7.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.16.0"
   },
   "devDependencies": {
