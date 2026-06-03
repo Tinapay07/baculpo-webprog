@@ -17,14 +17,21 @@ const parseOrigins = (value = "") =>
     .map((origin) => origin.trim())
     .filter(Boolean);
 
+// Start with any configured frontend origins
 const allowedOrigins = [
   ...parseOrigins(process.env.FRONTEND_ORIGIN),
   ...parseOrigins(process.env.FRONTEND_ORIGINS),
-  "http://localhost:5173",
-  "http://127.0.0.1:5173",
-  "http://localhost:5175",
-  "http://127.0.0.1:5175",
 ];
+
+// During local development allow common localhost dev ports
+if (process.env.NODE_ENV !== 'production') {
+  allowedOrigins.push(
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+    'http://localhost:5175',
+    'http://127.0.0.1:5175',
+  );
+}
 
 const isAllowedVercelPreview = (origin = "") =>
   process.env.ALLOW_VERCEL_PREVIEWS === "true" &&
@@ -54,7 +61,10 @@ app.get("/", (req, res) => {
     parseOrigins(process.env.FRONTEND_ORIGIN)[0] ||
     parseOrigins(process.env.FRONTEND_ORIGINS)[0];
 
-  if (frontendOrigin) {
+  // Only auto-redirect to a configured frontend origin during development.
+  // In production we prefer to return a small JSON health response so the API
+  // root doesn't accidentally redirect to a developer localhost URL.
+  if (frontendOrigin && process.env.NODE_ENV !== 'production') {
     res.redirect(frontendOrigin);
     return;
   }

@@ -34,7 +34,7 @@ const SignInPage = () => {
     try {
       const session = await loginUser(credentials);
       setAuthSession(session);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.message || 'Unable to log in. Please try again.');
     } finally {
