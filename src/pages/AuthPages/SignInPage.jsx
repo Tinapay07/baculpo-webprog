@@ -34,7 +34,13 @@ const SignInPage = () => {
     try {
       const session = await loginUser(credentials);
       setAuthSession(session);
-      navigate('/dashboard');
+
+      const userType = session?.user?.type;
+      if (userType === 'admin' || userType === 'editor') {
+        navigate('/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.message || 'Unable to log in. Please try again.');
     } finally {

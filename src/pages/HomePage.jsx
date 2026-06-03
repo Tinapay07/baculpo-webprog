@@ -71,6 +71,7 @@ const HomePage = () => {
               Meet the Studio
             </Button>
             <Button to="/articles">Browse Articles</Button>
+            <Button to="/auth/signup">Sign Up</Button>
           </div>
 
           <div className="rounded-[28px] border border-[#181716]/15 bg-[#f4efe7] p-4">
